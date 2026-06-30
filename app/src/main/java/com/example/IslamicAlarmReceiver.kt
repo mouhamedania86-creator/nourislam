@@ -211,12 +211,12 @@ class IslamicAlarmReceiver : BroadcastReceiver() {
                 weeklyPrayers.forEach { day ->
                     // جدولة أذان الـ 5 صلوات لهذا اليوم
                     val dayPrayers = listOf(
-                        Triple("الفجر", day.fajr),
-                        Triple("الظهر", day.dhuhr),
-                        Triple("العصر", day.asr),
-                        Triple("المغرب", day.maghrib),
-                        Triple("العشاء", day.isha)
-                    )
+    Pair("الفجر", day.fajr),
+    Pair("الظهر", day.dhuhr),
+    Pair("العصر", day.asr),
+    Pair("المغرب", day.maghrib),
+    Pair("العشاء", day.isha)
+)
                     dayPrayers.forEach { (prayerName, time) ->
                         scheduleWeeklyPrayerAlarm(context, prayerName, time, day.dateKey, day.dayOffset)
                         scheduleWeeklyPreAdhanAlarm(context, prayerName, time, day.dateKey, day.dayOffset)
