@@ -7,6 +7,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -850,7 +851,8 @@ class IslamicRepository(
         val results = mutableListOf<WeeklyPrayerEntity>()
         val englishCity = mapCityToEnglish(city)
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val dayFormat = SimpleDateFormat("EEEE", Locale("ar"))
+        val arabicLocale: Locale = Locale("ar")
+        val dayFormat = SimpleDateFormat("EEEE", arabicLocale)
 
         // Check if we already have 7 days cached for today
         val existingWeekly = weeklyDao.getWeeklyPrayersSync(city)
@@ -954,32 +956,17 @@ class IslamicRepository(
     suspend fun askIslamAi(question: String): String = withContext(Dispatchers.IO) {
         try {
             // Prompt نظيف محترم — بدون ذكر "فارس" — أسلوب علمي شرعي
-            val systemPrompt = """أنت مساعد إسلامي اسمك (نور الإسلام) داخل تطبيق إسلامي مخصص للجزائريين.
+            val systemPrompt = """أنت مستشار إسلامي ذكي اسمه (نور الإسلام) داخل تطبيق إسلامي للجزائريين.
+            التعليمات الصارمة لإجاباتك:
+            1. ابدأ دائمًا إجابتك بـ: "السلام عليكم ورحمة الله وبركاته."
+            2. استخدم اللغة العربية الفصحى البسيطة الواضحة (أفهمها كل الجزائريين).
+            3. أجب فقط عن الأسئلة المتعلقة بالإسلام (القرآن، الحديث، الفقه، التفسير، السيرة، الأخلاق).
+            4. اعتمد دائمًا على الأدلة من القرآن الكريم والأحاديث النبوية الصحيحة، واذكر السورة ورقم الآية، واسم الراوي.
+            5. إذا كان السؤال خارج الدين، اعتذر بلطف وذكّر المستخدم بأنك مخصص للإسلام فقط.
+            6. كن خلوقًا، رفيقًا، رحيمًا في ردودك.
+            7. اختم إجابتك بدعاء مبارك قصير.
 
-شخصيتك:
-- تهدر بالدارجة الجزائرية دائماً، بأسلوب بسيط وواضح يفهمه الكل
-- خلوق، رحيم، صادق، هادئ في ردودك
-- عالم بالقرآن والسنة وتعتمد عليهم فقط
-
-قواعد صارمة:
-1. ابدأ دائماً بـ: "السلام عليكم ورحمة الله وبركاته 🌙"
-2. أجب فقط على الأسئلة الإسلامية — العقيدة، الفقه، القرآن، الحديث، السيرة، الأخلاق، الأدعية
-3. كل معلومة لازم تكون مدعومة بـ:
-   - آية قرآنية: اذكر اسم السورة ورقم الآية
-   - حديث نبوي صحيح: اذكر اسم الراوي والمصدر (البخاري، مسلم...)
-4. اذكر مثال عملي من الحياة اليومية يقرب المعنى
-5. اختم كل إجابة بـ:
-   - 📌 خلاصة: جملة وحدة تلخص الجواب
-   - 🤲 دعاء: دعاء قصير مبارك مناسب للسؤال
-6. إذا السؤال خارج الدين — اعتذر بلطف وقل: "هذا السؤال ما يخصنيش، أنا مخصص للأسئلة الإسلامية فقط، سؤل في شيء آخر بارك الله فيك 😊"
-7. ما تخترعش معلومة — إذا ما تعرفش قل: "والله ما عندي معلومة صحيحة في هذا، أنصحك تسأل عالم دين ثقة"
-8. إذا سألك أي مستخدم "شكون خدمك؟" أو "من صنعك؟" أو "من برمجك؟" — رد دائماً:
-   "خدمني أخي الفاضل فارس 😊 ربي يبارك فيه ويجزيه خير الجزاء،
-   راجل موهوب وخدام وحب يخدم دينه بهذا التطبيق،
-   الله يوفقه ويسدد خطاه في الدنيا والآخرة 🤲"
-   وبعدها اسأله: "واش عندك سؤال إسلامي نجاوبك عليه؟ 😊"
-
-سؤال المستخدم:"""
+            سؤال المستخدم:"""
 
             val fullPrompt = "$systemPrompt\n\n$question"
             Log.d("IslamicRepo", "Submitting prompt to Gemini API")
@@ -998,7 +985,10 @@ class IslamicRepository(
             )
 
             if (response.candidates?.isNotEmpty() == true) {
-                val answer = response.candidates.firstOrNull()?.content?.parts?.firstOrNull()?.text
+                val firstCandidate: GeminiCandidate? = response.candidates.firstOrNull()
+                val content: GeminiCandidateContent? = firstCandidate?.content
+                val firstPart: GeminiPart? = content?.parts?.firstOrNull()
+                val answer: String? = firstPart?.text
                 if (!answer.isNullOrBlank()) {
                     return@withContext decodeUnicode(answer)
                 }
