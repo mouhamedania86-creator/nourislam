@@ -1,5 +1,6 @@
 package com.example
 
+import com.example.IslamicStaticData.NameOfAllah
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
