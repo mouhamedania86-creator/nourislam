@@ -80,7 +80,7 @@ fun RamadanView(onBack: () -> Unit) {
                 0 -> ImsakiyaView()
                 1 -> TarawihView()
                 2 -> QiyamView()
-                3 -> I'tikafView()
+                3 -> ItikafView()
                 4 -> KhatmaTrackerView()
             }
         }
@@ -460,7 +460,7 @@ fun QiyamView() {
  * الاعتكاف
  */
 @Composable
-fun I'tikafView() {
+fun ItikafView() {
     Column(
         modifier = Modifier
             .fillMaxSize()
