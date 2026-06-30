@@ -987,7 +987,6 @@ class IslamicRepository(
                 apiKey = apiKey,
                 request = geminiRequest
             )
-            )
 
             if (response.candidates?.isNotEmpty() == true) {
                 val firstCandidate: GeminiCandidate? = response.candidates.firstOrNull()
