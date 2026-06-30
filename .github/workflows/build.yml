@@ -64,22 +64,15 @@ jobs:
           echo "🔍 إصدارات:"
           echo "Kotlin: $(grep '^kotlin =' gradle/libs.versions.toml | head -1)"
           echo "KSP:    $(grep 'googleDevtoolsKsp' gradle/libs.versions.toml | head -1)"
-
-          # تحديث KSP للإصدار المتطابق مع Kotlin 2.2.10
           sed -i 's/googleDevtoolsKsp = "2.3.5"/googleDevtoolsKsp = "2.2.10-2.0.2"/' gradle/libs.versions.toml
-
-          # حذف أي bypass للـ built-in Kotlin
           sed -i '/android.builtInKotlin/d' gradle.properties
           sed -i '/android.newDsl/d' gradle.properties
           sed -i '/ksp\./d' gradle.properties
-
-          # السماح لـ KSP بإضافة Kotlin source sets (حل الخطأ الأخير)
           if ! grep -q "android.disallowKotlinSourceSets" gradle.properties; then
             echo "" >> gradle.properties
             echo "# Allow KSP to add Kotlin source sets (fix for built-in Kotlin)" >> gradle.properties
             echo "android.disallowKotlinSourceSets=false" >> gradle.properties
           fi
-
           echo ""
           echo "✅ النتيجة:"
           echo "KSP:    $(grep 'googleDevtoolsKsp' gradle/libs.versions.toml | head -1)"
@@ -126,7 +119,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-logs-${{ github.run_id }}
-        path: |
+          path: |
             app/build/outputs/logs/
             app/build/reports/
             build.log
