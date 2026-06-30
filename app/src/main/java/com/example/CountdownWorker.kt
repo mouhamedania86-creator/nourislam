@@ -34,20 +34,22 @@ class CountdownWorker(
             val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
             val nowTime = sdf.format(java.util.Date(now))
 
-            val prayers = listOf(
-    Pair("الفجر", cached.Fajr),
-    Pair("الظهر", cached.Dhuhr),
-    Pair("العصر", cached.Asr),
-    Pair("المغرب", cached.Maghrib),
-    Pair("العشاء", cached.Isha)
-)
+            val prayers: List<Pair<String, String>> = listOf(
+                Pair("الفجر", cached.Fajr),
+                Pair("الظهر", cached.Dhuhr),
+                Pair("العصر", cached.Asr),
+                Pair("المغرب", cached.Maghrib),
+                Pair("العشاء", cached.Isha)
+            )
 
             // إيجاد الصلاة القادمة (الأقرب من الآن)
             var nextPrayerName: String? = null
             var nextPrayerMillis: Long = 0
             val cal = Calendar.getInstance()
 
-            for ((name, timeStr) in prayers) {
+            for (prayer in prayers) {
+                val name: String = prayer.first
+                val timeStr: String = prayer.second
                 val parts = timeStr.trim().split(":")
                 if (parts.size != 2) continue
                 val hour = parts[0].toIntOrNull() ?: continue
