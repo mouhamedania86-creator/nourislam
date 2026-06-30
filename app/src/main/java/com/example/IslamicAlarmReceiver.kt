@@ -210,14 +210,16 @@ class IslamicAlarmReceiver : BroadcastReceiver() {
                 Log.d(TAG, "📅 Scheduling alarms for ${weeklyPrayers.size} days")
                 weeklyPrayers.forEach { day ->
                     // جدولة أذان الـ 5 صلوات لهذا اليوم
-                    val dayPrayers = listOf(
-    Pair("الفجر", day.fajr),
-    Pair("الظهر", day.dhuhr),
-    Pair("العصر", day.asr),
-    Pair("المغرب", day.maghrib),
-    Pair("العشاء", day.isha)
-)
-                    dayPrayers.forEach { (prayerName, time) ->
+                    val dayPrayers: List<Pair<String, String>> = listOf(
+                        Pair("الفجر", day.fajr),
+                        Pair("الظهر", day.dhuhr),
+                        Pair("العصر", day.asr),
+                        Pair("المغرب", day.maghrib),
+                        Pair("العشاء", day.isha)
+                    )
+                    dayPrayers.forEach { prayer ->
+                        val prayerName: String = prayer.first
+                        val time: String = prayer.second
                         scheduleWeeklyPrayerAlarm(context, prayerName, time, day.dateKey, day.dayOffset)
                         scheduleWeeklyPreAdhanAlarm(context, prayerName, time, day.dateKey, day.dayOffset)
                     }
@@ -270,7 +272,7 @@ class IslamicAlarmReceiver : BroadcastReceiver() {
 
                 val info = AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingIntent)
                 val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                alarmManager.setAlarmClock(info)
+                alarmManager.setAlarmClock(info, pendingIntent)
                 Log.d(TAG, "    ✅ Weekly alarm: $prayerName at $timeStr on $dateKey")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to schedule weekly prayer alarm", e)
@@ -324,7 +326,7 @@ class IslamicAlarmReceiver : BroadcastReceiver() {
 
                 val info = AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingIntent)
                 val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                alarmManager.setAlarmClock(info)
+                alarmManager.setAlarmClock(info, pendingIntent)
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to schedule weekly pre-adhan", e)
             }
