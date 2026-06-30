@@ -866,10 +866,11 @@ class IslamicRepository(
         Log.d("IslamicRepo", "📅 Fetching 7 days of prayer times from API")
 
         // Fetch 7 days
-        for (dayOffset in 0..6) {
+        for (dayOffset: Int in 0..6) {
             try {
+                val dayOffsetInt: Int = dayOffset
                 val calendar = Calendar.getInstance().apply {
-                    add(Calendar.DAY_OF_YEAR, dayOffset)
+                    add(Calendar.DAY_OF_YEAR, dayOffsetInt)
                 }
                 val dateKey = sdf.format(calendar.time)
                 val dayName = dayFormat.format(calendar.time)
@@ -904,8 +905,9 @@ class IslamicRepository(
             } catch (e: Exception) {
                 Log.e("IslamicRepo", "Failed to fetch day $dayOffset", e)
                 // Use fallback times
+                val dayOffsetInt2: Int = dayOffset
                 val calendar = Calendar.getInstance().apply {
-                    add(Calendar.DAY_OF_YEAR, dayOffset)
+                    add(Calendar.DAY_OF_YEAR, dayOffsetInt2)
                 }
                 results.add(WeeklyPrayerEntity(
                     dateKey = sdf.format(calendar.time),
@@ -968,20 +970,23 @@ class IslamicRepository(
 
             سؤال المستخدم:"""
 
-            val fullPrompt = "$systemPrompt\n\n$question"
+            val fullPrompt: String = "$systemPrompt\n\n$question"
             Log.d("IslamicRepo", "Submitting prompt to Gemini API")
 
             // استعمل Gemini API العام (يمكن للمستخدم تغيير المفتاح من الإعدادات)
-            val apiKey = com.example.BuildConfig.GEMINI_API_KEY.takeIf { it.isNotBlank() } ?: ""
-            val response = islamAiApi.askGemini(
-                apiKey = apiKey,
-                request = GeminiRequest(
-                    contents = listOf(
-                        GeminiContent(
-                            parts = listOf(GeminiPart(text = fullPrompt))
-                        )
+            val rawApiKey: String = com.example.BuildConfig.GEMINI_API_KEY
+            val apiKey: String = rawApiKey.takeIf { it.isNotBlank() } ?: ""
+            val geminiRequest: GeminiRequest = GeminiRequest(
+                contents = listOf(
+                    GeminiContent(
+                        parts = listOf(GeminiPart(text = fullPrompt))
                     )
                 )
+            )
+            val response: GeminiResponse = islamAiApi.askGemini(
+                apiKey = apiKey,
+                request = geminiRequest
+            )
             )
 
             if (response.candidates?.isNotEmpty() == true) {
