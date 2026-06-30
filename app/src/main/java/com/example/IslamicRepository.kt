@@ -868,10 +868,8 @@ class IslamicRepository(
         // Fetch 7 days
         for (dayOffset: Int in 0..6) {
             try {
-                val dayOffsetInt: Int = dayOffset
-                val calendar = Calendar.getInstance().apply {
-                    add(Calendar.DAY_OF_YEAR, dayOffsetInt)
-                }
+                val calendar = Calendar.getInstance()
+calendar.add(Calendar.DAY_OF_YEAR, dayOffset)
                 val dateKey = sdf.format(calendar.time)
                 val dayName = dayFormat.format(calendar.time)
 
@@ -905,10 +903,9 @@ class IslamicRepository(
             } catch (e: Exception) {
                 Log.e("IslamicRepo", "Failed to fetch day $dayOffset", e)
                 // Use fallback times
-                val dayOffsetInt2: Int = dayOffset
-                val calendar = Calendar.getInstance().apply {
-                    add(Calendar.DAY_OF_YEAR, dayOffsetInt2)
-                }
+                val calendar = Calendar.getInstance()
+calendar.add(Calendar.DAY_OF_YEAR, dayOffset)
+
                 results.add(WeeklyPrayerEntity(
                     dateKey = sdf.format(calendar.time),
                     city = city,
