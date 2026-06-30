@@ -35,12 +35,12 @@ class CountdownWorker(
             val nowTime = sdf.format(java.util.Date(now))
 
             val prayers = listOf(
-                Triple("الفجر", cached.Fajr),
-                Triple("الظهر", cached.Dhuhr),
-                Triple("العصر", cached.Asr),
-                Triple("المغرب", cached.Maghrib),
-                Triple("العشاء", cached.Isha)
-            )
+    Pair("الفجر", cached.Fajr),
+    Pair("الظهر", cached.Dhuhr),
+    Pair("العصر", cached.Asr),
+    Pair("المغرب", cached.Maghrib),
+    Pair("العشاء", cached.Isha)
+)
 
             // إيجاد الصلاة القادمة (الأقرب من الآن)
             var nextPrayerName: String? = null
