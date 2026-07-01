@@ -75,7 +75,7 @@ class IslamicAlarmReceiver : BroadcastReceiver() {
                 val triggerAt = System.currentTimeMillis() + DUA_INTERVAL_MS
 
                 // استخدم setAlarmClock (أقوى من setExactAndAllowWhileIdle)
-                val info = AlarmManager.AlarmClockInfo(triggerAt, pendingIntent)
+                val info = AlarmManager.AlarmClockInfo(triggerAt, null)
                 alarmManager.setAlarmClock(info)
                 Log.d(TAG, "✅ Dua scheduled in 20 min (setAlarmClock)")
             } catch (e: Exception) {
@@ -129,7 +129,7 @@ class IslamicAlarmReceiver : BroadcastReceiver() {
                 )
 
                 // استخدم setAlarmClock (أقوى trigger)
-                val info = AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingIntent)
+                val info = AlarmManager.AlarmClockInfo(calendar.timeInMillis, null)
                 alarmManager.setAlarmClock(info)
                 Log.d(TAG, "✅ Scheduled adhan: $prayerName at $timeStr (setAlarmClock)")
             } catch (e: Exception) {
@@ -173,7 +173,7 @@ class IslamicAlarmReceiver : BroadcastReceiver() {
                     PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                 )
 
-                val info = AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingIntent)
+                val info = AlarmManager.AlarmClockInfo(calendar.timeInMillis, null)
                 alarmManager.setAlarmClock(info)
                 Log.d(TAG, "✅ Scheduled pre-adhan: $prayerName (10 min before)")
             } catch (e: Exception) {
@@ -271,9 +271,9 @@ class IslamicAlarmReceiver : BroadcastReceiver() {
                     PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                 )
 
-                val info = AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingIntent)
+                val info = AlarmManager.AlarmClockInfo(calendar.timeInMillis, null)
                 val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                alarmManager.setAlarmClock(info, pendingIntent)
+                alarmManager.setAlarmClock(info)
                 Log.d(TAG, "    ✅ Weekly alarm: $prayerName at $timeStr on $dateKey")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to schedule weekly prayer alarm", e)
@@ -325,9 +325,9 @@ class IslamicAlarmReceiver : BroadcastReceiver() {
                     PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                 )
 
-                val info = AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingIntent)
+                val info = AlarmManager.AlarmClockInfo(calendar.timeInMillis, null)
                 val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                alarmManager.setAlarmClock(info, pendingIntent)
+                alarmManager.setAlarmClock(info)
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to schedule weekly pre-adhan", e)
             }
