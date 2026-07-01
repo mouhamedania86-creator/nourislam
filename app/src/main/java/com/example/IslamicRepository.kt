@@ -14,7 +14,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.net.URLEncoder
-import com.example.BuildConfig
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
