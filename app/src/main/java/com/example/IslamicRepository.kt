@@ -14,6 +14,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.net.URLEncoder
+import com.example.BuildConfig
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -975,7 +976,7 @@ calendar.add(Calendar.DAY_OF_YEAR, dayOffset)
             Log.d("IslamicRepo", "Submitting prompt to Gemini API")
 
             // استعمل Gemini API العام (يمكن للمستخدم تغيير المفتاح من الإعدادات)
-            val rawApiKey: String = com.example.BuildConfig.GEMINI_API_KEY
+            val rawApiKey: String = BuildConfig.GEMINI_API_KEY
             val apiKey: String = rawApiKey.takeIf { it.isNotBlank() } ?: ""
             val geminiRequest: GeminiRequest = GeminiRequest(
                 contents = listOf(
