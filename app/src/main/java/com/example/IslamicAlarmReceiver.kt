@@ -354,44 +354,43 @@ class BootReceiver : BroadcastReceiver() {
         try {
             val db = AppDatabase.getDatabase(context)
             // استخدم CoroutineScope بدل Thread + runBlocking — يمنع ANR
-            kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
-                try {
-                    val cached = db.prayerCacheDao().getLatestSync()
-                    if (cached != null) {
-                        IslamicAlarmReceiver.scheduleAllDailyAlarms(context, cached)
-                        IslamicAlarmReceiver.scheduleAllPreAdhanAlarms(context, cached)
-                        Log.d("BootReceiver", "✅ Prayer + pre-adhan alarms rescheduled")
-                    } else {
-                        Log.w("BootReceiver", "⚠️ No cached prayer times — alarms will be set when app opens")
-                        // Try to refresh via repository
-                        try {
-                            val settings = db.settingsDao().getSettingsDirect() ?: SettingsEntity()
-                            val repository = IslamicRepository(
-                                settingsDao = db.settingsDao(),
-                                prayerCacheDao = db.prayerCacheDao(),
-                                tasbihDao = db.tasbihDao()
-                            )
-                            val timings = repository.getPrayerTimes(
-                                settings.city, settings.country, settings.calculationMethod
-                            )
-                            if (timings != null) {
-                                IslamicAlarmReceiver.scheduleAllDailyAlarms(context, timings)
-                                IslamicAlarmReceiver.scheduleAllPreAdhanAlarms(context, timings)
-                            }
-                        } catch (e: Exception) {
-                            Log.e("BootReceiver", "Failed to fetch prayers on boot", e)
-                        }
-                    }
-                } catch (e: Exception) {
-                    Log.e("BootReceiver", "Error reading cached prayers", e)
+            Thread {
+        try {
+        val cached = db.prayerCacheDao().getLatestSync()
+        if (cached != null) {
+            IslamicAlarmReceiver.scheduleAllDailyAlarms(context, cached)
+            IslamicAlarmReceiver.scheduleAllPreAdhanAlarms(context, cached)
+            Log.d("BootReceiver", "✅ Prayer + pre-adhan alarms rescheduled")
+        } else {
+            Log.w("BootReceiver", "⚠️ No cached prayer times — alarms will be set when app opens")
+            try {
+                val settings = db.settingsDao().getSettingsDirect() ?: SettingsEntity()
+                val repository = IslamicRepository(
+                    settingsDao = db.settingsDao(),
+                    prayerCacheDao = db.prayerCacheDao(),
+                    tasbihDao = db.tasbihDao()
+                )
+                val timings = repository.getPrayerTimes(
+                    settings.city, settings.country, settings.calculationMethod
+                )
+                if (timings != null) {
+                    IslamicAlarmReceiver.scheduleAllDailyAlarms(context, timings)
+                    IslamicAlarmReceiver.scheduleAllPreAdhanAlarms(context, timings)
                 }
+            } catch (e: Exception) {
+                Log.e("BootReceiver", "Failed to fetch prayers on boot", e)
             }
-        } catch (e: Exception) {
-            Log.e("BootReceiver", "DB error on boot", e)
         }
+    } catch (e: Exception) {
+        Log.e("BootReceiver", "Error reading cached prayers", e)
+    }
+}.start()
+} catch (e: Exception) {
+    Log.e("BootReceiver", "DB error on boot", e)
+}
 
-        // 3. أظهر إشعار دعاء فوراً كترحيب
-        IslamicNotificationManager.showPeriodicDuaNotification(context)
+// 3. أظهر إشعار دعاء فوراً كترحيب
+IslamicNotificationManager.showPeriodicDuaNotification(context)
     }
 }
 
