@@ -28,7 +28,7 @@ object IslamicNotificationManager {
     private const val COUNTDOWN_ID = 8001
 
     // استخدام أيقونة التطبيق بدل أيقونة النظام
-    private fun appIcon() = R.mipmap.ic_launcher
+    private fun appIcon() = android.R.drawable.ic_lock_silent_mode_off
 
     fun initNotificationChannels(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
