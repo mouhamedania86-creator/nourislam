@@ -1,6 +1,5 @@
 package com.example
 
-import com.example.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
