@@ -468,7 +468,7 @@ fun ItikafView() {
             .padding(16.dp)
     ) {
         Text("🕌 الاعتكاف", fontSize = 22.sp, fontWeight = FontWeight.Bold)
-        Text("اللبث في المسجد لعبادة الله", fontSize = 12.sp, Color.Gray)
+        Text("اللبث في المسجد لعبادة الله", fontSize = 12.sp, color = Color.Gray)
 
         Spacer(Modifier.height(16.dp))
 
